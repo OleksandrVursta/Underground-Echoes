@@ -22,7 +22,8 @@ def get_recommendations(band_name):
         response = client.chat.completions.create(
             model="o3-mini", 
             messages=[{"role": "user", "content": system_prompt}],
-            response_format={ "type": "json_object" }
+            response_format={ "type": "json_object" },
+            timeout=45
         )
         
         data = json.loads(response.choices[0].message.content)
