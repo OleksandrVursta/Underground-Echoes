@@ -26,11 +26,12 @@
    ```bash
    pip install -r requirements.txt
 3. **Налаштуйте середовище:**
-- Створіть файл .env у кореневій папці (використовуйте .env.example як шаблон) та додайте ваші ключі:
--🔑 TELEGRAM_TOKEN — отримати у @BotFather
--🧠 OPENAI_API_KEY — отримати на platform.openai.com
--🎸 SPOTIPY_CLIENT_ID — отримати в Spotify Developer Dashboard
--🔐 SPOTIPY_CLIENT_SECRET — ваш секретний ключ Spotify
+   Створіть файл `.env` у кореневій папці (використовуйте `.env.example` як шаблон) та додайте ваші ключі:
+
+   - 🔑 `TELEGRAM_TOKEN` — отримати у [@BotFather](https://t.me/BotFather)
+   - 🧠 `OPENAI_API_KEY` — отримати на [platform.openai.com](https://platform.openai.com/)
+   - 🎸 `SPOTIPY_CLIENT_ID` — отримати в [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
+   - 🔐 `SPOTIPY_CLIENT_SECRET` — ваш секретний ключ Spotify
 4. **Запустіть бота:**
    ```bash
    python bot.py
