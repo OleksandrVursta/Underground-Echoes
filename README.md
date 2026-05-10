@@ -43,31 +43,39 @@
 - 💎 Видає користувачу "чисту" п'ятірку найкращих результатів без "галюцинацій" та порожніх посилань.
 
 graph TD
-    %% Користувач
-    User((Користувач 🤘)) <-->|Текст: 'Korn'| Bot[bot.py: Telegram Bot]
+    %% Nodes
+    User((Користувач 🤘))
+    Bot[bot.py: Telegram Bot]
+    Validators[utils/validators.py]
+    Processing[bot.reply_to: Статус]
+    OpenAI[services/openai_service.py: o3-mini]
+    Spotify[services/spotify_service.py: Spotipy]
+    SpAPI[Spotify Web API]
+    Del[bot.delete_message]
 
-    subgraph Logic_Layer [Ядро системи]
-        Bot -->|1. Валідація| Validators[utils/validators.py]
-        Bot -->|2. Миттєвий статус| Processing[bot.reply_to: '⏳ Занурююсь...']
+    %% Flow
+    User <-->|Повідомлення| Bot
+    
+    subgraph Logic [Ядро логіки]
+        Bot --> Validators
+        Bot --> Processing
     end
 
-    subgraph AI_Processing [Інтелектуальна обробка]
-        Bot -->|3. Over-fetching запит| OpenAI[services/openai_service.py: o3-mini]
-        OpenAI -->|4. JSON Список: 15-20 гуртів| Bot
+    subgraph AI [Інтелектуальний рівень]
+        Bot -->|Over-fetching| OpenAI
+        OpenAI -->|JSON: 20 варіантів| Bot
     end
 
-    subgraph Verification [Верифікація та Фільтрація]
-        Bot -->|5. Цикл перевірки| Spotify[services/spotify_service.py: Spotipy]
-        Spotify -->|6. Пошук & SequenceMatcher| SpAPI[Spotify Web API]
-        SpAPI -->|7. Прямі лінки & Популярність| Spotify
-        Spotify -->|8. Топ-5 валідних результатів| Bot
+    subgraph Search [Верифікація Spotify]
+        Bot --> Spotify
+        Spotify <-->|SequenceMatcher| SpAPI
+        Spotify -->|Топ-5 валідних| Bot
     end
 
-    %% Фінал
-    Bot -->|9. Видалення статусу| Del[bot.delete_message]
-    Bot -->|10. Результат| User
+    Bot --> Del
+    Bot -->|Результат| User
 
-    %% Стилі (дизайн)
+    %% Styling
     style User fill:#000,color:#fff,stroke:#333
     style Bot fill:#24A1DE,color:#fff,stroke:#333,stroke-width:2px
     style OpenAI fill:#74aa9c,color:#fff,stroke:#000
