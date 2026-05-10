@@ -41,3 +41,35 @@
 - 📡 Запитує у ШІ 15-20 варіантів гуртів.
 - 🔍 Фільтрує їх через Spotify API на відповідність назви та наявність реальних треків.
 - 💎 Видає користувачу "чисту" п'ятірку найкращих результатів без "галюцинацій" та порожніх посилань.
+
+graph TD
+    %% Користувач
+    User((Користувач 🤘)) <-->|Текст: 'Korn'| Bot[bot.py: Telegram Bot]
+
+    subgraph Logic_Layer [Ядро системи]
+        Bot -->|1. Валідація| Validators[utils/validators.py]
+        Bot -->|2. Миттєвий статус| Processing[bot.reply_to: '⏳ Занурююсь...']
+    end
+
+    subgraph AI_Processing [Інтелектуальна обробка]
+        Bot -->|3. Over-fetching запит| OpenAI[services/openai_service.py: o3-mini]
+        OpenAI -->|4. JSON Список: 15-20 гуртів| Bot
+    end
+
+    subgraph Verification [Верифікація та Фільтрація]
+        Bot -->|5. Цикл перевірки| Spotify[services/spotify_service.py: Spotipy]
+        Spotify -->|6. Пошук & SequenceMatcher| SpAPI[Spotify Web API]
+        SpAPI -->|7. Прямі лінки & Популярність| Spotify
+        Spotify -->|8. Топ-5 валідних результатів| Bot
+    end
+
+    %% Фінал
+    Bot -->|9. Видалення статусу| Del[bot.delete_message]
+    Bot -->|10. Результат| User
+
+    %% Стилі (дизайн)
+    style User fill:#000,color:#fff,stroke:#333
+    style Bot fill:#24A1DE,color:#fff,stroke:#333,stroke-width:2px
+    style OpenAI fill:#74aa9c,color:#fff,stroke:#000
+    style Spotify fill:#1DB954,color:#000,stroke:#000
+    style Processing fill:#f9f,stroke-dasharray: 5 5
