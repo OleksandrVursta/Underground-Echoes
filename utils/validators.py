@@ -1,7 +1,4 @@
 def validate_music_request(text: str):
-    """
-    Перевіряє вхідний текст на відповідність правилам безпеки (Етап 6).
-    """
     if not text or len(text.strip()) == 0:
         return False, "Повідомлення не може бути порожнім. Напиши назву гурту!"
 

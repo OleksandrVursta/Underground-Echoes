@@ -30,31 +30,25 @@ def handle_message(message):
         bot.reply_to(message, error)
         return
 
-    # 1. МИТТЄВА ВІДПОВІДЬ (щоб юзер не чекав 4 хвилини в тиші)
     processing_msg = bot.reply_to(
         message, 
         "⏳ **Занурююсь у глибокий андеграунд...**\nПошук рідкісних гуртів може зайняти до хвилини, зачекайте трохи.", 
         parse_mode='Markdown'
     )
-    
-    # Показуємо статус "друкує" в заголовку чату
+
     bot.send_chat_action(message.chat.id, 'typing')
     
     print(f"DEBUG: Запит від юзера: {message.text}")
     
     try:
-        # 2. ОСНОВНА ЛОГІКА (ШІ + Spotify)
         result = get_recommendations(message.text)
-        
-        # 3. ВИДАЛЯЄМО СТАТУС ОЧІКУВАННЯ
+
         bot.delete_message(message.chat.id, processing_msg.message_id)
-        
-        # 4. ВІДПРАВЛЯЄМО РЕЗУЛЬТАТ
+
         bot.reply_to(message, result, parse_mode='Markdown')
         
     except Exception as e:
         print(f"❌ ПОМИЛКА: {e}")
-        # Видаляємо "пісочний годинник", якщо сталася помилка
         try:
             bot.delete_message(message.chat.id, processing_msg.message_id)
         except:
