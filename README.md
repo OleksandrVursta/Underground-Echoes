@@ -42,42 +42,37 @@
 - 🔍 Фільтрує їх через Spotify API на відповідність назви та наявність реальних треків.
 - 💎 Видає користувачу "чисту" п'ятірку найкращих результатів без "галюцинацій" та порожніх посилань.
 
+
+### 🏗 Архітектура системи
+
+```mermaid
 graph TD
-    %% Nodes
-    User((Користувач 🤘))
-    Bot[bot.py: Telegram Bot]
-    Validators[utils/validators.py]
-    Processing[bot.reply_to: Статус]
-    OpenAI[services/openai_service.py: o3-mini]
-    Spotify[services/spotify_service.py: Spotipy]
-    SpAPI[Spotify Web API]
-    Del[bot.delete_message]
+    %% Користувач та інтерфейс
+    User((Користувач 🤘)) <-->|Назва гурту| Bot[bot.py: Telegram Bot]
 
-    %% Flow
-    User <-->|Повідомлення| Bot
-    
-    subgraph Logic [Ядро логіки]
-        Bot --> Validators
-        Bot --> Processing
+    subgraph Backend [Серверна логіка]
+        Bot -->|1. Валідація| Val[utils/validators.py]
+        Bot -->|2. Статус| Status[bot.reply_to: ⏳ Занурююсь...]
     end
 
-    subgraph AI [Інтелектуальний рівень]
-        Bot -->|Over-fetching| OpenAI
-        OpenAI -->|JSON: 20 варіантів| Bot
+    subgraph AI_Layer [Інтелектуальний рівень]
+        Bot -->|3. Over-fetching запит| OpenAI[services/openai_service.py: o3-mini]
+        OpenAI -->|4. Список: 20 кандидатів| Bot
     end
 
-    subgraph Search [Верифікація Spotify]
-        Bot --> Spotify
-        Spotify <-->|SequenceMatcher| SpAPI
-        Spotify -->|Топ-5 валідних| Bot
+    subgraph Search_Layer [Верифікація Spotify]
+        Bot -->|5. Фільтрація| Spot[services/spotify_service.py: Spotipy]
+        Spot <-->|6. Пошук & SequenceMatcher| SpAPI[Spotify Web API]
+        Spot -->|7. Топ-5 перевірених| Bot
     end
 
-    Bot --> Del
-    Bot -->|Результат| User
+    %% Фінал
+    Bot -->|8. Видалення статусу| Del[bot.delete_message]
+    Bot -->|9. Результат| User
 
-    %% Styling
+    %% Стилі
     style User fill:#000,color:#fff,stroke:#333
     style Bot fill:#24A1DE,color:#fff,stroke:#333,stroke-width:2px
     style OpenAI fill:#74aa9c,color:#fff,stroke:#000
-    style Spotify fill:#1DB954,color:#000,stroke:#000
-    style Processing fill:#f9f,stroke-dasharray: 5 5
+    style Spot fill:#1DB954,color:#000,stroke:#000
+    style Status fill:#f9f,stroke-dasharray: 5 5
